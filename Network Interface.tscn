@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://cch1r5l40ld2p"]
+
+[ext_resource type="Script" path="res://Network Interface.gd" id="1_bhwpy"]
+
+[node name="Network Interface" type="HTTPRequest"]
+script = ExtResource("1_bhwpy")

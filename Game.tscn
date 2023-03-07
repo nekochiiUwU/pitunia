@@ -1,0 +1,55 @@
+[gd_scene load_steps=8 format=3 uid="uid://ekfq3bjljydn"]
+
+[ext_resource type="Script" path="res://Game.gd" id="1_eir4y"]
+[ext_resource type="Texture2D" uid="uid://dwmp3hmn6stjw" path="res://Assets/Global/Board.png" id="2_d2dbs"]
+
+[sub_resource type="Environment" id="Environment_v6kn5"]
+background_mode = 3
+tonemap_mode = 3
+tonemap_exposure = 0.7
+glow_blend_mode = 0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_0pjvf"]
+size = Vector2(224, 8)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_o73vc"]
+size = Vector2(8, 224)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ob7cl"]
+size = Vector2(224, 8)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_34ddl"]
+size = Vector2(8, 224)
+
+[node name="Game" type="Node"]
+script = ExtResource("1_eir4y")
+
+[node name="Players" type="Node" parent="."]
+unique_name_in_owner = true
+
+[node name="World" type="Node" parent="."]
+
+[node name="Environment" type="WorldEnvironment" parent="World"]
+environment = SubResource("Environment_v6kn5")
+
+[node name="Board" type="Sprite2D" parent="World"]
+texture_filter = 1
+texture = ExtResource("2_d2dbs")
+
+[node name="Body" type="StaticBody2D" parent="World/Board"]
+
+[node name="Collision 0" type="CollisionShape2D" parent="World/Board/Body"]
+position = Vector2(0, -108)
+shape = SubResource("RectangleShape2D_0pjvf")
+
+[node name="Collision 1" type="CollisionShape2D" parent="World/Board/Body"]
+position = Vector2(-108, 0)
+shape = SubResource("RectangleShape2D_o73vc")
+
+[node name="Collision 2" type="CollisionShape2D" parent="World/Board/Body"]
+position = Vector2(0, 108)
+shape = SubResource("RectangleShape2D_ob7cl")
+
+[node name="Collision 3" type="CollisionShape2D" parent="World/Board/Body"]
+position = Vector2(108, 0)
+shape = SubResource("RectangleShape2D_34ddl")
