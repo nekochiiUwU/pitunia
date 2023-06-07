@@ -1,0 +1,26 @@
+2a60927148abd1d33b818b535e306557
+::res://::1686171549
+Game.gd::GDScript::-1::1679342971::0::1::::<>Node<>::
+Game.tscn::PackedScene::301732782381646507::1679342970::0::1::::<><>::res://Game.gd<>uid://dwmp3hmn6stjw
+icon.svg::CompressedTexture2D::80632805020511069::1678209491::1678209526::1::::<><>::
+Network Interface.gd::GDScript::-1::1679341401::0::1::::<>HTTPRequest<>::
+Network Interface.tscn::PackedScene::4929280293293821945::1678209491::0::1::::<><>::res://Network Interface.gd
+Network.gd::GDScript::-1::1679338001::0::1::::<>Node<>::
+Player.tscn::PackedScene::3196267170149964564::1679342971::0::1::::<><>::uid://bfcamfnx1ei4<>res://Sprite2D.gd
+Sprite2D.gd::GDScript::-1::1678215986::0::1::::<>Sprite2D<>::
+Tools.gd::GDScript::-1::1678209491::0::1::::<>Node<>::
+::res://Assets/::1678209491
+::res://Assets/Entities/::1678209491
+::res://Assets/Entities/Warior/::1678209491
+::res://Assets/Entities/Warior/Hit/::1678209526
+A0.png::CompressedTexture2D::455588725927758065::1678209491::1678209526::1::::<><>::
+A1.png::CompressedTexture2D::891764170151038361::1678209491::1678209526::1::::<><>::
+E0.png::CompressedTexture2D::2726878454786876910::1678209491::1678209526::1::::<><>::
+E1.png::CompressedTexture2D::5083270370109540083::1678209491::1678209526::1::::<><>::
+::res://Assets/Entities/Warior/Stand/::1678209526
+A0.png::CompressedTexture2D::8929019823634124143::1678209491::1678209526::1::::<><>::
+A1.png::CompressedTexture2D::3342275366846743896::1678209491::1678209526::1::::<><>::
+E0.png::CompressedTexture2D::193304580446590348::1678209491::1678209526::1::::<><>::
+E1.png::CompressedTexture2D::8479024893626347106::1678209491::1678209526::1::::<><>::
+::res://Assets/Global/::1678209526
+Board.png::CompressedTexture2D::8729150288119487668::1678209491::1678209526::1::::<><>::

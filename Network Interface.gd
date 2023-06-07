@@ -1,6 +1,6 @@
 extends HTTPRequest
 
-var request_action: Callable = func x():pass
+var request_action:      Callable
 var requesting:            String = ""
 var request_buffer:         Array = []
 var send_time:              float = 0.
@@ -15,51 +15,62 @@ func _ready():
 
 
 func _process(_delta):
-	if Input.is_action_just_pressed("ui_accept"):
-		type = !type
 	if type == Network.TYPE_SYNCHONIZER:
 		if requesting == "":
 			sync()
-		if mid_online_delay[2] >= 2:
-			mid_online_delay[0] *= 1/mid_online_delay[2] * 1000
-			mid_online_delay[1] *= 1/mid_online_delay[2] * 1000
+		if mid_online_delay[2] >= 1:
+			mid_online_delay[0] *= 1000/mid_online_delay[2]
+			mid_online_delay[1] *= 1000/mid_online_delay[2]
 			print("Sync: GET: ", int(mid_online_delay[0]                      ), 
 				" ms\t\t SET: ", int(                      mid_online_delay[1]), 
 				" ms\t\t ALL: ", int(mid_online_delay[0] + mid_online_delay[1]), 
 				" ms")
 			mid_online_delay = [0, 0, 0]
+	elif type == Network.TYPE_SETTER:
+		if requesting == "":
+			online_set()
+	elif type == Network.TYPE_GETTER:
+		if requesting == "":
+			online_get()
 
 
 func sync():
 	var request_content = recursive_automatic_online_variable_getter(get_node("../%Players").get_node(Network.ID))
 	new_request("set", 1, request_content)
-	# print("SET: ", request_content)
+	#print("SET: ", request_content)
 	request_action = func f(_d):
 		mid_online_delay[1] += online_delay
 		new_request("get", 1, {})
 		request_action = func f(data):
-			# print("GET: ", data)
+			#print("GET: ", data)
 			mid_online_delay[0] += online_delay
 			mid_online_delay[2] += 1
 			recursive_automatic_online_variable_assignment(data)
 
 
 func convert_vectors(data):
-	var value_list
+	var values
+	var keys
 	if data is Dictionary:
-		value_list = data.values()
+		keys = data.keys()
+		values = data.values()
 	else:
-		value_list = data
-	for element in value_list:
-		if element is Array or element is Dictionary:
-			convert_vectors(element)
-		elif element is String:
-			if element[0] == "(" and element[-1] == ")":
+		values = data
+	for i in range(len(values)):
+		if values[i] is Array or values[i] is Dictionary:
+			values[i] = convert_vectors(values[i])
+		elif values[i] is String:
+			if values[i][0] == "(" and values[i][-1] == ")":
 				var vector_type = 1
-				for character in element:
+				for character in values[i]:
 					vector_type += int(character == ",")
-				element = "Vector" + str(vector_type) + element
-				element = str_to_var(element)
+				values[i] = "Vector" + str(vector_type) + values[i]
+				values[i] = str_to_var(values[i])
+		if data is Dictionary:
+			data[keys[i]] = values[i]
+		else:
+			data[i] = values[i]
+	return data
 
 
 func recursive_automatic_online_variable_getter(current_path: Object) -> Dictionary:
@@ -83,10 +94,9 @@ func _request_completed(result: int, response: int, headers: PackedStringArray, 
 				var json = JSON.new()
 				json.parse(body)
 				body = json.get_data()
-				convert_vectors(body)
-		if request_action.get_bound_arguments_count() != 1:
+				body = convert_vectors(body)
 			request_action.call(body)
-			request_action.bind(func x():pass)
+			request_action.bind(null)
 	else:
 		print("ERROR: ", result)
 		print(headers)
@@ -95,13 +105,19 @@ func _request_completed(result: int, response: int, headers: PackedStringArray, 
 
 
 func recursive_automatic_online_variable_assignment(data: Dictionary, current_path = get_node("/root/")):
-	for element_name in data.keys():
-		if element_name is Dictionary:
-			for node in current_path.get_children():
-				if element_name == node.name:
-					return recursive_automatic_online_variable_assignment(data[element_name], node)
-		current_path.set(element_name, data[element_name])
-		return 0
+	var assign: bool
+	for e_name in data.keys():
+		assign = true
+		if data[e_name] is Dictionary:
+			var nv_nodes = current_path.get_children()
+			for node in nv_nodes:
+				#print(node.name, e_name)
+				if e_name == node.name and e_name != Network.ID:
+					recursive_automatic_online_variable_assignment(data[e_name], node)
+					assign = false
+		if assign:
+			current_path.set(e_name, data[e_name])
+	return 0
 
 
 func new_request(request_type: String, game: int = 0, data: Dictionary = {}, password: String = "0"):
@@ -117,3 +133,15 @@ func new_request(request_type: String, game: int = 0, data: Dictionary = {}, pas
 	requesting = request_type
 	send_time = Tools.time
 	return request(Network.SERVER, request_headers, HTTPClient.METHOD_POST, JSON.stringify(request_content))
+
+func online_set():
+	print(Network.ID)
+	var request_content = recursive_automatic_online_variable_getter(get_node("../%Players").get_node(Network.ID))
+	new_request("set", 1, request_content)
+	request_action = func f(_d):
+		return null
+
+func online_get():
+	new_request("get", 1, {})
+	request_action = func f(data):
+		recursive_automatic_online_variable_assignment(data)
